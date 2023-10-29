@@ -1,6 +1,7 @@
 {
   "files.associations": {
     "stdio.h": "c",
-    "sort.h": "c"
+    "sort.h": "c",
+    "string.h": "c"
   }
 }

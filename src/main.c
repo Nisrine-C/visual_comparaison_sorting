@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
+#include <string.h>
 #include "../include/sort.h"
 #include "../include/calc.h"
 
@@ -17,18 +18,6 @@ void (*sortingFunctions[])(int[], int, bool) = {
   //quickSort,
   //mergeSort
 };
-
-void generateXaxis(){
-  FILE *fp = NULL;
-  fp = fopen("X-axis", "w");
-  int j = 0;
-  for (int i = 0; i <= 10000; i=i+250)
-  {
-    matrix[j][0] = i;
-    fprintf(fp,"%d \n",i);
-    j++;
-  }
-}
 
 void generateYaxis(int order){
   int k = 0;
@@ -49,25 +38,42 @@ void generateYaxis(int order){
   }
 }
 
-int main(){
-  generateXaxis();
-  generateYaxis(true);
-
-  for (int row=0; row<ROWS; row++)
+void generateFile(int n){
+  FILE *fp = NULL;
+  char name[20];
+  sprintf(name, "file_%d.data", n);
+  fp = fopen(name, "w");
+  int j = 0;
+  for (int i = 0; i <= 10000; i=i+250)
   {
-    for(int columns=0; columns<COLUMNS; columns++)
-    {
-      printf("%.2f | ", matrix[row][columns]);
-    }
-    printf("\n");
+    fprintf(fp, "%d %.2f\n", i, matrix[j][n]);
+    j++;
   }
-  
-  
-  
-  
+}
+
+int main(){
+  generateYaxis(true);
+  for (int i = 1; i < 4; i++){
+    generateFile(i);
+  }
+  char sortingFunctions[5][20] = {
+    "bubbleSort",
+    "insertionSort",
+    "selectionSort",
+    //quickSort,
+    //mergeSort
+  };
+  FILE *gnupipe = NULL;
+  char *GnuCommands[] = {
+    "set title \"Sort\"", 
+    "plot 'file_1.data' w lp title 'bubble', 'file_2.data' w lp title 'insertion', 'file_3.data' w lp title 'selection'"};  
+  gnupipe = _popen("gnuplot -persisten", "w");
+  for (int i = 0; i < 2; i ++){
+    fprintf(gnupipe, "%s\n", GnuCommands[i]);
+  }
+
   /*
   FILE *fp = NULL;
-  FILE *fp2 = NULL;
   FILE *gnupipe = NULL;
   char *GnuCommands[] = {"set title \"Sort\"", "plot 'data.tmp' w lp ","plot 'dat.tmp w lp"};
 
@@ -78,25 +84,7 @@ int main(){
     printf("Error: Unable to open gnuplot.\n");
     return 1;
   }
-  for (int i = 0; i < 10000; i=i+500)
-  {
-    arraySize = i;
-    int A[arraySize];
-    initRand(A, arraySize);
-    mySort = selectionSort;
-    float time = calc(mySort,A,arraySize,1);
-    fprintf(fp, "%d %.2f\n", i, time);
-  }
   fprintf(gnupipe, "%s\n", GnuCommands[0]);
-  for (int i = 0; i < 10000; i=i+500)
-  {
-    arraySize = i;
-    int A[arraySize];
-    initRand(A, arraySize);
-    mySort = selectionSort;
-    float time = calc(mySort,A,arraySize,1);
-    fprintf(fp, "%d %.2f\n", i, time);
-  }
   */
   return 0;
 }
