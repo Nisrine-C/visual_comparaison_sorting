@@ -2,10 +2,13 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
+#include <windows.h> 
+#include <math.h> 
+#include <conio.h>
 #include "../include/sort.h"
 #include "../include/calc.h"
 
-int arraySize=0;
+int arraySize = 0;
 #define ROWS  41
 #define COLUMNS  6
 
@@ -18,6 +21,7 @@ void (*sortingFunctions[])(int[], int, bool) = {
   //quickSort,
   //mergeSort
 };
+
 
 void generateYaxis(int order){
   int k = 0;
@@ -34,9 +38,34 @@ void generateYaxis(int order){
       float time = calc(mySort, B, arraySize, order);
       matrix[k][j] = time;
     }
+
+    for (int column = 0; column < COLUMNS; column++) {
+      movingAverage(matrix[column], ROWS,COLUMNS);
+    }
     k++;
   }
 }
+
+void generateYaxis2(int order){
+  int k = 0;
+  for (int i = 0; i <= 10000; i=i+250)
+  {
+    arraySize = i;
+    int A[arraySize];
+    initRand(A, arraySize);
+    mySort(A, arraySize,order);
+    for (int j = 1; j < 4; j++){
+      mySort = sortingFunctions[j - 1];
+      float time = calc(mySort, A, arraySize, order);
+      matrix[k][j] = time;
+    }
+    for (int column = 0; column < COLUMNS; column++) {
+      movingAverage(matrix[column], ROWS,COLUMNS);
+    }
+    k++;
+  }
+}
+
 
 void generateFile(int n){
   FILE *fp = NULL;
@@ -49,43 +78,102 @@ void generateFile(int n){
     fprintf(fp, "%d %.2f\n", i, matrix[j][n]);
     j++;
   }
+  fclose(fp);
+}
+
+void menu(){
+  char *GnuCommands[] = {
+    "set title \"Sort\"",
+    "plot 'file_1.data' w l title 'bubble', 'file_2.data' w l title 'insertion', 'file_3.data' w l title 'selection'"
+  };        
+  FILE *gnupipe = NULL;   
+  while(true){
+    aa:
+    system("cls");
+    gnupipe = _popen("gnuplot -persistent", "w");
+    printf("                         Sorting Visualiser\n");
+    printf("1.  Standard Random Array                    ");
+		printf("2.  Pre Sorted Array           \n");
+		printf("3.  exit\n");
+    switch(getch()){
+			case 49:
+      while(true){
+        printf("                         Sorting Visualiser\n");
+        printf("1.  Ascending                   ");
+        printf("2.  Descending                \n");
+        printf("3.  Back\n");
+        switch(getch()){
+          case 49:
+            generateYaxis(true);
+            for (int i = 1; i < 4; i++){
+              generateFile(i);
+            }
+            for (int i = 0; i < 2; i ++){
+              fprintf(gnupipe, "%s\n", GnuCommands[i]);
+            }
+            _pclose(gnupipe);
+             
+            goto aa;
+          case 50:
+            generateYaxis(false);
+            for (int i = 1; i < 4; i++){
+              generateFile(i);
+            }
+            for (int i = 0; i < 2; i ++){
+              fprintf(gnupipe, "%s\n", GnuCommands[i]);
+            }
+            _pclose(gnupipe);
+             
+            goto aa;
+          case 51:
+            goto aa;
+          default:;
+        }
+      }
+      case 50:   
+      while(true){
+        printf("                         Sorting Visualiser\n");
+        printf("1.  Ascending                   ");
+        printf("2.  Descending                \n");
+        printf("3.  Back\n");
+        switch(getch()){
+          case 49:
+            generateYaxis2(true);
+            for (int i = 1; i < 4; i++){
+              generateFile(i);
+            }
+            for (int i = 0; i < 2; i ++){
+              fprintf(gnupipe, "%s\n", GnuCommands[i]);
+            }
+            _pclose(gnupipe);
+            
+            goto aa;  
+          case 50:
+            generateYaxis2(false);
+            for (int i = 1; i < 4; i++){
+              generateFile(i);
+            }
+            
+            for (int i = 0; i < 2; i ++){
+              fprintf(gnupipe, "%s\n", GnuCommands[i]);
+            }
+            _pclose(gnupipe);
+             
+            goto aa;
+          case 51:
+            goto aa;
+          default:;
+        }
+      }
+      case 51:
+        exit(1);
+			default:;
+    }
+  }
 }
 
 int main(){
-  generateYaxis(true);
-  for (int i = 1; i < 4; i++){
-    generateFile(i);
-  }
-  char sortingFunctions[5][20] = {
-    "bubbleSort",
-    "insertionSort",
-    "selectionSort",
-    //quickSort,
-    //mergeSort
-  };
-  FILE *gnupipe = NULL;
-  char *GnuCommands[] = {
-    "set title \"Sort\"", 
-    "plot 'file_1.data' w lp title 'bubble', 'file_2.data' w lp title 'insertion', 'file_3.data' w lp title 'selection'"};  
-  gnupipe = _popen("gnuplot -persisten", "w");
-  for (int i = 0; i < 2; i ++){
-    fprintf(gnupipe, "%s\n", GnuCommands[i]);
-  }
-
-  /*
-  FILE *fp = NULL;
-  FILE *gnupipe = NULL;
-  char *GnuCommands[] = {"set title \"Sort\"", "plot 'data.tmp' w lp ","plot 'dat.tmp w lp"};
-
-  fp = fopen("data.tmp","w");
-  gnupipe = _popen("gnuplot -persisten", "w");
-  if (gnupipe == NULL)
-  {
-    printf("Error: Unable to open gnuplot.\n");
-    return 1;
-  }
-  fprintf(gnupipe, "%s\n", GnuCommands[0]);
-  */
+  menu();
   return 0;
 }
 

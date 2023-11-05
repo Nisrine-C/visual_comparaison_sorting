@@ -17,6 +17,17 @@ void initRand(int A[], int n)
   }
 }
 
+void initRandNeg(int A[], int n)
+{
+  for (int i = 0; i < n; i++){
+    if(i % 2 == 0){
+      A[i] = rand();
+    }else{
+      A[i] = rand() - RAND_MAX/2;
+    }
+  }
+}
+
 float calc(void (*mySort)(int[], int, bool),int arr[], int size,bool order) {
     clock_t start, end;
     float execution_time;
@@ -35,3 +46,17 @@ float calc(void (*mySort)(int[], int, bool),int arr[], int size,bool order) {
 
     return execution_time;
 }
+
+void movingAverage(float data[], int n, int window) {
+  for (int i = 0; i < n; i++) {
+    float sum = 0;
+    int count = 0;
+    for (int j = i - window / 2; j <= i + window / 2; j++) {
+      if (j >= 0 && j < n) {
+        sum += data[j];
+        count++;
+      }
+    }
+    data[i] = sum / count;
+  }
+} 
