@@ -9,7 +9,7 @@
 #include "../include/calc.h"
 
 int arraySize = 0;
-#define ROWS  41
+#define ROWS  42
 #define COLUMNS  6
 
 float matrix[ROWS][COLUMNS];
