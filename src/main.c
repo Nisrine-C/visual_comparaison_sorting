@@ -8,12 +8,15 @@
 #include "../include/sort.h"
 #include "../include/calc.h"
 
-int arraySize = 0;
+//declaration des constantes
 #define ROWS  201
 #define COLUMNS  6
 
+//declaration de variables globales
+int arraySize = 0;
 float matrix[ROWS][COLUMNS];
 
+//fonction qui boucle entre les different valeurs possible pour "mySort" (fonction generique de tri)
 void (*sortingFunctions[])(int[], int, bool) = {
   bubbleSort,
   insertionSort,
@@ -22,6 +25,7 @@ void (*sortingFunctions[])(int[], int, bool) = {
   mergeSort
 };
 
+//fonction qui calcul le temps de deroulement et le stock dans un tableau (pour le tri d'un tableau avec des valeurs aleatoires)
 void generateYaxis(int order){
   int k = 0;
   for (int i = 0; i <= 25000; i=i+125)
@@ -37,15 +41,19 @@ void generateYaxis(int order){
       float time = calc(mySort, B, arraySize, order);
       matrix[k][j] = time;
     }
-    
-    for (int column = 0; column < COLUMNS; column++) {
-      movingAverage(matrix[column], ROWS,COLUMNS);
-    }
 
+    for (int i = 0; i < 100; i++){
+      for (int column = 0; column < COLUMNS; column++)
+      {
+        movingAverage(matrix[column], ROWS, 3);
+      }
+    }
     k++;
-  }
+  }    
+ 
 }
 
+//fonction qui calcul le temps de deroulement et le stock dans un tableau (pour le tri d'un tableau deja trie)
 void generateYaxis2(int order){
   int k = 0;
   for (int i = 0; i <= 25000; i=i+125)
@@ -60,12 +68,13 @@ void generateYaxis2(int order){
       matrix[k][j] = time;
     }
     for (int column = 0; column < COLUMNS; column++) {
-      movingAverage(matrix[column], ROWS,1);
+      movingAverage(matrix[column], ROWS,3);
     }
     k++;
   }
 }
 
+//fonction qui stock les valeurs dans des fichiers
 void generateFile(int n){
   FILE *fp = NULL;
   char name[20];
@@ -80,27 +89,28 @@ void generateFile(int n){
   fclose(fp);
 }
 
+//fonction de menu general 
 void menu(){
   char *GnuCommands[] = {
-    "set title \"Sort\"",
-    "plot 'file_1.data' w l title 'bubble', 'file_2.data' w l title 'insertion', 'file_3.data' w l title 'selection','file_4.data' w l title 'counting','file_5.data' w l title 'merge'"
+    "set title \"Comparaison des fonctions de tri\"",
+    "plot 'file_1.data' w l title 'tri a bulles', 'file_2.data' w l title 'tri par insertion', 'file_3.data' w l title 'tri par selection','file_4.data' w l title 'tri par comptage','file_5.data' w l title 'tri par fusion'"
   };        
   FILE *gnupipe = NULL;   
   while(true){
     aa:
     system("cls");
     gnupipe = _popen("gnuplot -persistent", "w");
-    printf("                         Sorting Visualiser\n");
-    printf("1.  Standard Random Array                    ");
-		printf("2.  Pre Sorted Array           \n");
+    printf("                         Comparaison des fonctions de tri\n");
+    printf("1.  Tableau avec des valeurs aleatoires                   ");
+		printf("2.  Tableau deja trie           \n");
 		printf("3.  exit\n");
     switch(getch()){
 			case 49:
       while(true){
-        printf("                         Sorting Visualiser\n");
-        printf("1.  Ascending                   ");
-        printf("2.  Descending                \n");
-        printf("3.  Back\n");
+        printf("                         Comparaison des fonctions de tri\n");
+        printf("1.  Croissant                   ");
+        printf("2.  Decroissant               \n");
+        printf("3.  retour\n");
         switch(getch()){
           case 49:
             generateYaxis(true);
@@ -131,10 +141,10 @@ void menu(){
       }
       case 50:   
       while(true){
-        printf("                         Sorting Visualiser\n");
-        printf("1.  Ascending                   ");
-        printf("2.  Descending                \n");
-        printf("3.  Back\n");
+        printf("                       Comparaison des fonctions de tri\n");
+        printf("1.  Croissant                   ");
+        printf("2.  Decroissant               \n");
+        printf("3.  retour\n");
         switch(getch()){
           case 49:
             generateYaxis2(true);

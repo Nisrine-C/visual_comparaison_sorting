@@ -9,6 +9,6 @@ void countingSort(int A[], int n, bool order);
 void mergeSort(int A[],int n,bool order); //tri par fusion
 
 
-extern void (*mySort)(int[], int, bool);
+extern void (*mySort)(int[], int, bool);//fonction generique
 
 #endif /* SORT_H */

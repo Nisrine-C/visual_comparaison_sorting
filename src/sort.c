@@ -2,26 +2,14 @@
 #include <stdlib.h>
 #include "../include/sort.h"
 
-void swap(int *a,int *b){
+
+void swap(int *a,int *b){//fonction de permutation
   int tmp = *a;
   *a = *b;
   *b = tmp;
 }
 
-int partition(int A[],int low,int high, bool order){
-	int pivot = A[high];
-	int i = (low-1);
-	for (int j = low; j < high; j++){
-		if ((order && A[j] < pivot) || (!order && A[j] > pivot)){
-			i++;
-			swap(&A[i],&A[j]);
-		}
-	}
-	swap(&A[i+1], &A[high]);
-	return (i+1);
-}
-
-void merge(int A[], int left, int mid, int right, bool order) {
+void merge(int A[], int left, int mid, int right, bool order) {//fonction de fusion
     int n1 = mid - left + 1;
     int n2 = right - mid;
 
@@ -61,7 +49,7 @@ void merge(int A[], int left, int mid, int right, bool order) {
     }
 }
 
-void mergeSortHelper(int A[], int left, int right, bool order) {
+void mergeSortHelper(int A[], int left, int right, bool order) {//fonction d'aide de tri par fusion
     if (left < right) {
         int mid = left + (right - left) / 2;
         mergeSortHelper(A, left, mid, order);
@@ -70,8 +58,7 @@ void mergeSortHelper(int A[], int left, int right, bool order) {
     }
 }
 
-void bubbleSort(int A[], int n, bool order) 
-{
+void bubbleSort(int A[], int n, bool order) { // tri a bulles
   bool swapped = false;
   int tmp;
 
@@ -102,8 +89,7 @@ void bubbleSort(int A[], int n, bool order)
   }
 }
 
-void selectionSort(int A[],int n,bool order)
-{
+void selectionSort(int A[],int n,bool order){ //tri par selection
   int min,max,tmp,index;
   if(order){
     for (int i = 0; i < n;i++){
@@ -132,8 +118,7 @@ void selectionSort(int A[],int n,bool order)
   }
 }
 
-void insertionSort(int A[],int n,bool order)
-{
+void insertionSort(int A[],int n,bool order){ //tri par insertion
   int key,j;
   if(order){
     for (int i = 1; i < n; i++){
@@ -160,65 +145,52 @@ void insertionSort(int A[],int n,bool order)
   }
 }
 
-/*
-void quickSort(int A[],int n,bool order){
-  int low = A[0];
-  int high = A[n-1];
-  if(low < high){
-    int pivotIndex = partition(A,low,high,order);
-    quickSort(A,low,pivotIndex-1,order);
-    quickSort(A,pivotIndex+1,high,order);
-	}
-}
-*/
-
-void countingSort(int A[], int n, bool order) {
+void countingSort(int A[], int n, bool order) { // tri par comptage
     if (n <= 0) {
         return;
     }
-    int max_value = A[0];
-    int min_value = A[0];
+    int max = A[0];
     for (int i = 1; i < n; i++) {
-        if (A[i] > max_value) {
-            max_value = A[i];
-        }
-        if (A[i] < min_value) {
-            min_value = A[i];
+        if (A[i] > max) {
+            max = A[i];
         }
     }
-    int range = max_value - min_value + 1;
-    int* count = (int*)calloc(range, sizeof(int));
 
+    // Create a count array to store the count of each element
+    int count[max + 1];
+    for (int i = 0; i <= max; i++) {
+        count[i] = 0;
+    }
+
+    // Count the occurrences of each element in the input array
     for (int i = 0; i < n; i++) {
-        count[A[i] - min_value]++;
+        count[A[i]]++;
     }
 
+    // Reconstruct the sorted array from the count array
     int index = 0;
-
-    if (order) {
-        for (int i = 0; i < range; i++) {
+    if (order) {  // Ascending order
+        for (int i = 0; i <= max; i++) {
             while (count[i] > 0) {
-                A[index] = i + min_value;
+                A[index] = i;
                 index++;
                 count[i]--;
             }
         }
-    } else {
-        for (int i = range - 1; i >= 0; i--) { // Fixed the loop condition
+    } else {  // Descending order
+        for (int i = max; i >= 0; i--) {
             while (count[i] > 0) {
-                A[index] = i + min_value;
+                A[index] = i;
                 index++;
                 count[i]--;
             }
         }
     }
-
-    free(count);
 }
 
-void mergeSort(int A[],int n,bool order){
+void mergeSort(int A[],int n,bool order){ // tri par fusion
   mergeSortHelper(A, 0, n - 1, order);
 }
 
-void (*mySort)(int[], int, bool) = bubbleSort;
-
+void (*mySort)(int[], int, bool) = bubbleSort; // fonction generique (par default:tri a bulle)
+ 
