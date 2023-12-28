@@ -3,6 +3,8 @@
 ## Authors
 - CHAKIR Nisrine (GLSID)
 - DAMRI Sara (GLSID)
+- IOUIRI Hanane (BDCC)
+- ELHAJI Nouhayla (BDCC)
 
 ## Supervised by
 - Professor M.QBADOU
